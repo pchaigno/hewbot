@@ -7,7 +7,7 @@ Hewbot is a chat bot built on the [Hubot][hubot] framework.
 ### Running Hewbot Locally
 
 You can test your Hubot by running the following, however some plugins will not
-behave as expected unless the [environment variables](#configuration) they rely
+behave as expected unless the environment variables they rely
 upon have been set.
 
 You can start Hewbot locally by running:
@@ -30,7 +30,7 @@ hewbot help - Displays all of the help commands that hewbot knows about.
 ### Scripting
 
 An example script is included at `scripts/example.coffee`, so check it out to
-get started, along with the [Scripting Guide](scripting-docs).
+get started, along with the [Scripting Guide][scripting-docs].
 
 For many common tasks, there's a good chance someone has already one to do just
 the thing.
@@ -44,7 +44,7 @@ writing it yourself, you can use existing plugins.
 
 Hubot is able to load plugins from third-party `npm` packages. This is the
 recommended way to add functionality to your Hubot. You can get a list of
-available Hubot plugins on [npmjs.com](npmjs) or by using `npm search`:
+available Hubot plugins on [npmjs.com][npmjs] or by using `npm search`:
 ```
 $ npm search hubot-scripts panda
 NAME             DESCRIPTION                        AUTHOR DATE       VERSION KEYWORDS
