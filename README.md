@@ -6,13 +6,14 @@ Hewbot is a chat bot built on the [Hubot][hubot] framework.
 
 ### Running Hewbot Locally
 
-You can test your Hubot by running the following, however some plugins will not
-behave as expected unless the environment variables they rely
-upon have been set.
-
-You can start Hewbot locally by running:
+If you don't have a Node.js environment set up, you can use the provided Dockerfile:
 ```
-$ bin/hubot
+$ docker build .
+$ docker run -it [container_id]
+```
+Alternatively, if you already have Node.js installed:
+```
+$ bin/hubot --adapter shell --name hewbot 
 ```
 You'll see some start up output and a prompt:
 ```
