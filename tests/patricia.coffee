@@ -13,13 +13,36 @@ describe 'patricia', ->
   afterEach ->
     room.destroy()
 
-  context 'user enters the room', ->
+  context 'user without a bouncer enters the room', ->
     beforeEach ->
-      room.user.enter 'spoonboy'
-      room.user.enter 'ximepa'
+      room.robot.brain.users_without_bouncer = ['alice', 'bob']
+      room.user.enter 'alice'
+      room.user.enter 'bob'
 
-    it 'should encourage user to take a bouncer', ->
+    it 'encourage user to take a bouncer', ->
       expect(room.messages).to.eql [
-        ['hubot', '@spoonboy Prend un bouncer s\'il te plait.']
-        ['hubot', '@ximepa Prend un bouncer s\'il te plait.']
+        ['hubot', "@alice Prend un bouncer s'il te plait."]
+        ['hubot', "@bob Prend un bouncer s'il te plait."]
       ]
+
+  context 'pchaigno points out an user without a bouncer', ->
+    beforeEach ->
+      room.user.say 'pchaigno', 'hubot: alice does not seem to have a bouncer'
+
+    it 'saves the user without a bouncer in memory', ->
+      expect(room.messages).to.eql [
+        ['pchaigno', 'hubot: alice does not seem to have a bouncer']
+        ['hubot', "@pchaigno I'll keep that in mind"]
+      ]
+      expect(room.robot.brain.users_without_bouncer).to.eql ['alice']
+
+  context 'someone points out an user without a bouncer', ->
+    beforeEach ->
+      room.user.say 'joe', 'hubot: alice does not seem to have a bouncer'
+
+    it 'asks pchaigno for confirmation', ->
+      expect(room.messages).to.eql [
+        ['joe', 'hubot: alice does not seem to have a bouncer']
+        ['hubot', "pchaigno?"]
+      ]
+      expect(room.robot.brain.users_without_bouncer).to.eql undefined
