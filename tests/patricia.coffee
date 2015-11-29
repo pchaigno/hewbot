@@ -16,12 +16,12 @@ describe 'patricia', ->
   context 'user without a bouncer enters the room', ->
     beforeEach ->
       room.robot.brain.users_without_bouncer = ['alice', 'bob']
-      room.user.enter 'alice'
+      room.user.enter 'alice_'
       room.user.enter 'bob'
 
     it 'encourage user to take a bouncer', ->
       expect(room.messages).to.eql [
-        ['hubot', "@alice Prend un bouncer s'il te plait."]
+        ['hubot', "@alice_ Prend un bouncer s'il te plait."]
         ['hubot', "@bob Prend un bouncer s'il te plait."]
       ]
 
