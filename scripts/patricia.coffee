@@ -21,7 +21,7 @@ module.exports = (robot) ->
       if res.message.user.name.startsWith user
         res.reply "Prend un bouncer s'il te plait."
 
-  robot.respond /(.*) does not seem to have a bouncer/, (res) ->
+  robot.respond /([^\s]+) does not seem to have a bouncer/, (res) ->
     if res.message.user.name is 'pchaigno'
       users = robot.brain.users_without_bouncer or []
       users.push(res.match[1])
@@ -35,7 +35,7 @@ module.exports = (robot) ->
     users_text = users.join(', ')
     res.reply users_text
 
-  robot.respond /(.*) (now )?has a bouncer/, (res) ->
+  robot.respond /([^\s]+) (now )?has a bouncer/, (res) ->
     if res.message.user.name is 'pchaigno'
       users = robot.brain.users_without_bouncer or []
       robot.brain.users_without_bouncer = users.filter (user) -> user isnt res.match[1]

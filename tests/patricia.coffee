@@ -61,11 +61,11 @@ describe 'patricia', ->
   context 'pchaigno mention that a user now has a bouncer', ->
     beforeEach ->
       room.robot.brain.users_without_bouncer = ['alice', 'bob']
-      room.user.say 'pchaigno', 'hubot: alice has a bouncer'
+      room.user.say 'pchaigno', 'hubot: alice now has a bouncer'
 
     it 'saves the user without a bouncer in memory', ->
       expect(room.messages).to.eql [
-        ['pchaigno', 'hubot: alice has a bouncer']
+        ['pchaigno', 'hubot: alice now has a bouncer']
         ['hubot', "@pchaigno Glad to hear that!"]
       ]
       expect(room.robot.brain.users_without_bouncer).to.eql ['bob']
