@@ -66,3 +66,10 @@ extension as a double quoted string to the `hubot-scripts.json` file in this
 repo.
 
 [hubot-scripts]: https://github.com/github/hubot-scripts
+
+
+### Testing
+
+Hewbot uses [hubot-test-helper](https://github.com/mtsmfm/hubot-test-helper) for test development.
+
+See this blog post for a good tutorial: https://amussey.github.io/2015/08/11/testing-hubot-scripts.html
