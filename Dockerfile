@@ -27,4 +27,17 @@ ENV PATH $NVM_DIR/v$NODE_VERSION/bin:$PATH
 ADD . /hewbot
 WORKDIR /hewbot
 
-ENTRYPOINT bin/hubot --name hewbot
+# Default adapter and name
+ENV ADAPTER shell
+ENV NAME hewbot
+
+# Default environment variables in case IRC adapter is used
+# User needs to define ADAPTER, NAME, HUBOT_IRC_ROOMS
+# and eventually HUBOT_IRC_NICKSERV_PASSWORD
+ENV HUBOT_IRC_SERVER "irc.freenode.net"
+ENV HUBOT_IRC_PORT 6697
+ENV HUBOT_IRC_DEBUG "true"
+ENV HUBOT_IRC_USESSL "true"
+ENV HUBOT_IRC_UNFLOOD "true"
+
+ENTRYPOINT bin/hubot --adapter $ADAPTER --name $NAME
