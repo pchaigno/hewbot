@@ -11,7 +11,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 
 # Install base dependencies
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends build-essential ca-certificates curl libssl-dev
+RUN apt-get install -y --no-install-recommends python build-essential ca-certificates curl libssl-dev
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 0.11.16
