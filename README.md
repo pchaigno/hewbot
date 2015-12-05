@@ -13,7 +13,7 @@ $ docker run -it [container_id]
 ```
 Alternatively, if you already have Node.js installed:
 ```
-$ bin/hubot --adapter shell --name hewbot 
+$ bin/hubot --adapter shell --name hewbot
 ```
 You'll see some start up output and a prompt:
 ```
@@ -27,6 +27,20 @@ hewbot animate me <query> - The same thing as `image me`, except adds [snip]
 hewbot help - Displays all of the help commands that hewbot knows about.
 ...
 ```
+
+### Running Hewbot on IRC
+
+The Dockerfile allows you to send Hewbot on IRC:
+```
+docker build .
+docker run -e "ADAPTER=irc" -e "NAME=[hewbot_nickname]" -e "HUBOT_IRC_ROOMS=#[channel]" -it [container_id]
+```
+Or, with a registered nickname:
+```
+docker run -e "ADAPTER=irc" -e "HUBOT_IRC_NICKSERV_PASSWORD=[password]" -e "NAME=[hewbot_nickname]" -e "HUBOT_IRC_ROOMS=#[channel]" -it [container_id]
+```
+See [Dockerfile](Dockerfile) for other possible environment variables.
+
 
 ### Scripting
 
