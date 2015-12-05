@@ -29,3 +29,16 @@ module.exports = (robot) ->
       res.reply "I'll keep that in mind"
     else
       res.send 'pchaigno?'
+
+  robot.respond /who does not have a bouncer\?/, (res) ->
+    users = robot.brain.users_without_bouncer or []
+    users_text = users.join(', ')
+    res.reply users_text
+
+  robot.respond /(.*) (now )?has a bouncer/, (res) ->
+    if res.message.user.name is 'pchaigno'
+      users = robot.brain.users_without_bouncer or []
+      robot.brain.users_without_bouncer = users.filter (user) -> user isnt res.match[1]
+      res.reply "Glad to hear that!"
+    else
+      res.send 'pchaigno?'
