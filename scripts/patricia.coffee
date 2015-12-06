@@ -9,6 +9,8 @@
 #
 # Commands:
 #   hubot [user] does not seem to have a bouncer - Saves [user] in memory
+#   hubot who does not have a bouncer? - List users without a bouncer from memory
+#   hubot [user] (now)? has a bouncer - Remove [user] from memory
 #
 # Author:
 #   Paul Chaignon <paul.chaignon@gmail.com>
