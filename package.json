@@ -23,6 +23,7 @@
     "hubot-scripts": "^2.16.2",
     "hubot-shipit": "^0.2.0",
     "hubot-wikipedia": "0.0.2",
+    "hubot-youtube-info": "0.2.3",
     "optparse": "1.0.3"
   },
   "devDependencies": {
