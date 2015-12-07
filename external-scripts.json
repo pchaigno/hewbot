@@ -8,5 +8,6 @@
   "hubot-rules",
   "hubot-shipit",
   "hubot-wikipedia",
-  "hubot-reload-scripts"
+  "hubot-reload-scripts",
+  "hubot-youtube-info"
 ]
