@@ -9,5 +9,6 @@
   "hubot-shipit",
   "hubot-wikipedia",
   "hubot-reload-scripts",
-  "hubot-youtube-info"
+  "hubot-youtube-info",
+  "hubot-url-title""
 ]
