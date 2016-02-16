@@ -8,7 +8,7 @@
 #   None
 #
 # Commands:
-#   hubot [user] does not seem to have a bouncer - Saves [user] in memory
+#   hubot [user] does not have a bouncer - Saves [user] in memory
 #   hubot who does not have a bouncer? - List users without a bouncer from memory
 #   hubot [user] (now)? has a bouncer - Remove [user] from memory
 #
@@ -19,28 +19,29 @@ String::startsWith ?= (s) -> @slice(0, s.length) == s
 
 module.exports = (robot) ->
   robot.enter (res) ->
-    for user in robot.brain.users_without_bouncer
+    for user in robot.brain.get('users_without_bouncer')
       if res.message.user.name.startsWith user
         res.reply "Prend un bouncer s'il te plait."
 
-  robot.respond /([^\s]+) does not seem to have a bouncer/, (res) ->
+  robot.respond /([^\s]+) does not have a bouncer$/, (res) ->
     if res.message.user.name is 'pchaigno'
-      users = robot.brain.users_without_bouncer or []
+      users = robot.brain.get('users_without_bouncer') or []
       users.push(res.match[1])
-      robot.brain.users_without_bouncer = users
+      robot.brain.set 'users_without_bouncer', users
       res.reply "I'll keep that in mind"
     else
       res.send 'pchaigno?'
 
   robot.respond /who does not have a bouncer\?/, (res) ->
-    users = robot.brain.users_without_bouncer or []
+    users = robot.brain.get('users_without_bouncer') or []
     users_text = users.join(', ')
     res.reply users_text
 
   robot.respond /([^\s]+) (now )?has a bouncer/, (res) ->
     if res.message.user.name is 'pchaigno'
-      users = robot.brain.users_without_bouncer or []
-      robot.brain.users_without_bouncer = users.filter (user) -> user isnt res.match[1]
+      users = robot.brain.get('users_without_bouncer') or []
+      users_without_bouncer = users.filter (user) -> user isnt res.match[1]
+      robot.brain.set 'users_without_bouncer', users_without_bouncer
       res.reply "Glad to hear that!"
     else
       res.send 'pchaigno?'

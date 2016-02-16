@@ -13,16 +13,9 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends python build-essential ca-certificates curl libssl-dev
 
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 0.11.16
-
-# Install NVM with NodeJS and NPM
-RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.20.0/install.sh | bash \
-    && source $NVM_DIR/nvm.sh \
-    && nvm install $NODE_VERSION
-
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/v$NODE_VERSION/bin:$PATH
+# Install last version of Node.js
+RUN curl -sL https://deb.nodesource.com/setup_5.x | bash -
+RUN apt-get install -y --no-install-recommends nodejs
 
 ADD . /hewbot
 WORKDIR /hewbot
