@@ -26,7 +26,10 @@ computeHash = (body) ->
 changedWebResources = (robot, res) ->
   resources = robot.brain.get('web_resources') or {}
   for resource, hash of resources
-    robot.http(resource).get() (err, response, body) ->
+    changedWebResource(robot, res, resource, hash)
+
+changedWebResource = (robot, res, resource, hash) ->
+  robot.http(resource).get() (err, response, body) ->
       newHash = null
       if err
         newHash = 0
