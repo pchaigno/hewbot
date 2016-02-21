@@ -17,18 +17,19 @@
 
 crypto = require "crypto"
 
+PERIODIC_CHECKS_INTERVAL = 10000
 periodicCheckId = null
 firstPeriodicCheck = true
 
 computeHash = (body) ->
   return crypto.createHash("sha256").update(body).digest("base64")
 
-changedWebResources = (robot, res) ->
+changedWebResources = (robot, room) ->
   resources = robot.brain.get('web_resources') or {}
   for resource, hash of resources
-    changedWebResource(robot, res, resource, hash)
+    changedWebResource(robot, room, resource, hash)
 
-changedWebResource = (robot, res, resource, hash) ->
+changedWebResource = (robot, room, resource, hash) ->
   robot.http(resource).get() (err, response, body) ->
       newHash = null
       if err
@@ -40,17 +41,17 @@ changedWebResource = (robot, res, resource, hash) ->
       else
         newHash = response.statusCode
       if newHash isnt null
-        callbackChangedResource(robot, resource, newHash, res)
+        callbackChangedResource(robot, resource, newHash, room)
 
-callbackChangedResource = (robot, resource, newHash, res) ->
+callbackChangedResource = (robot, resource, newHash, room) ->
   # There might be concurrent accesses to web_resources here.
   # Need a way to prevent integrity issues.
   resources = robot.brain.get('web_resources') or {}
   resources[resource] = newHash
   robot.brain.set 'web_resources', resources
-  res.send "#{resource} changed"
+  robot.messageRoom room, "#{resource} changed"
 
-periodicCheck = (robot, res) ->
+periodicCheck = (robot, room) ->
   if firstPeriodicCheck
     firstPeriodicCheck = false
   else
@@ -59,9 +60,17 @@ periodicCheck = (robot, res) ->
       clearInterval(periodicCheckId)
       firstPeriodicCheck = true
     else
-      changedWebResources(robot, res)
+      changedWebResources(robot, room)
+
+init = (robot) ->
+  resources = robot.brain.get('web_resources')
+  room = robot.brain.get('room_web_resources')
+  if resources isnt null and room isnt null
+    setInterval(periodicCheck, PERIODIC_CHECKS_INTERVAL, robot, room)
 
 module.exports = (robot) ->
+  init(robot)
+
   robot.respond /watch (https?:\/\/[^\s]+)$/, (res) ->
     resource = res.match[1]
     robot.http(resource).get() (err, response, body) ->
@@ -74,7 +83,9 @@ module.exports = (robot) ->
         resources[res.match[1]] = hash
         robot.brain.set 'web_resources', resources
         if firstPeriodicCheck
-          periodicCheckId = setInterval(periodicCheck, 10000, robot, res)
+          room = res.envelope.room
+          robot.brain.set 'room_web_resources', room
+          periodicCheckId = setInterval(periodicCheck, PERIODIC_CHECKS_INTERVAL, robot, room)
         res.reply "Resource looks good. I'll keep you informed."
       else
         res.reply "The resource seems unavailable: #{response.statusMessage}"

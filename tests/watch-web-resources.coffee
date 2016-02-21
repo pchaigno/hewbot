@@ -21,6 +21,7 @@ describe 'watch-web-resources', ->
         ['hubot', "@pchaigno Resource looks good. I'll keep you informed."]
       ]
       expect(Object.keys(@room.robot.brain.get('web_resources'))).to.eql ['https://github.com']
+      expect(@room.robot.brain.get('room_web_resources')).to.eql 'room1'
 
   context 'pchaigno wants to monitor an inexistant web resource', ->
     beforeEach ->
@@ -66,7 +67,7 @@ describe 'watch-web-resources', ->
         yield @room.user.say 'pchaigno', 'hubot: did any web resource change?'
         yield new Promise.delay(1000)
 
-    it 'answers with the url of the resources which changed', ->
+    it 'answers with the url of the changed resources', ->
       expect(@room.messages).to.eql [
         ['pchaigno', 'hubot: did any web resource change?']
         ['hubot', "https://github.com changed"]
