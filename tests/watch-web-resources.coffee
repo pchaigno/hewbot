@@ -20,7 +20,21 @@ describe 'watch-web-resources', ->
         ['pchaigno', 'hubot: watch https://github.com']
         ['hubot', "@pchaigno Resource looks good. I'll keep you informed."]
       ]
-      expect(Object.keys(@room.robot.brain.get('web_resources'))).to.eql ['https://github.com']
+      expect(Object.keys(@room.robot.brain.get('web_resources'))).to.eql ['github.com']
+      expect(@room.robot.brain.get('room_web_resources')).to.eql 'room1'
+
+  context "pchaigno wants to monitor a new web resource, but doesn't specify the protocol", ->
+    beforeEach ->
+      co =>
+        yield @room.user.say 'pchaigno', 'hubot: watch travis-ci.org'
+        yield new Promise.delay(1000)
+
+    it 'saves the resource in memory after checking it', ->
+      expect(@room.messages).to.eql [
+        ['pchaigno', 'hubot: watch travis-ci.org']
+        ['hubot', "@pchaigno Resource looks good. I'll keep you informed."]
+      ]
+      expect(Object.keys(@room.robot.brain.get('web_resources'))).to.eql ['travis-ci.org']
       expect(@room.robot.brain.get('room_web_resources')).to.eql 'room1'
 
   context 'pchaigno wants to monitor an inexistant web resource', ->
@@ -39,13 +53,13 @@ describe 'watch-web-resources', ->
 
   context 'someone asks for the list of monitored web resources', ->
     beforeEach ->
-      @room.robot.brain.set 'web_resources', {'https://github.com': ''}
+      @room.robot.brain.set 'web_resources', {'github.com': ''}
       @room.user.say 'bob', 'hubot: what are you watching?'
 
     it "answers with the list of monitored web resources", ->
       expect(@room.messages).to.eql [
         ['bob', 'hubot: what are you watching?']
-        ['hubot', "@bob https://github.com"]
+        ['hubot', "@bob github.com"]
       ]
 
   context 'someone asks for the list of monitored web resources', ->
@@ -60,7 +74,7 @@ describe 'watch-web-resources', ->
 
   context 'pchaigno does not care for github.com anymore', ->
     beforeEach ->
-      @room.robot.brain.set 'web_resources', {'https://github.com': ''}
+      @room.robot.brain.set 'web_resources', {'github.com': ''}
       @room.user.say 'pchaigno', 'hubot: stop watching https://github.com'
 
     it 'removes github.com from the web resources to monitor', ->
@@ -83,7 +97,7 @@ describe 'watch-web-resources', ->
         ['hubot', "https://github.com changed"]
         ['hubot', "https://twitter.com changed"]
       ]
-      expect(@room.robot.brain.get('web_resources')['https://github.com']).to.not.eql ''
+      expect(@room.robot.brain.get('web_resources')['github.com']).to.not.eql ''
 
   context 'pchaigno asks if any web resource changed', ->
     beforeEach ->

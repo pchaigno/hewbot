@@ -8,8 +8,8 @@
 #   None
 #
 # Commands:
-#   hubot watch http[s]://[url] - Adds a web resource to the list of monitored resources.
-#   hubot stop watching http[s]://[url] - Removes a web resource from the list.
+#   hubot watch [url] - Adds a web resource to the list of monitored resources.
+#   hubot stop watching [url] - Removes a web resource from the list.
 #   hubot what are you watching? - Returns the list of web resources to monitor.
 #
 # Author:
@@ -71,8 +71,10 @@ init = (robot) ->
 module.exports = (robot) ->
   init(robot)
 
-  robot.respond /watch (https?:\/\/[^\s]+)$/, (res) ->
+  robot.respond /watch ((?:https?:\/\/)?([^\s]+))$/, (res) ->
     resource = res.match[1]
+    if not /^https?:\/\//.test(resource)
+      resource = "https://#{resource}"
     robot.http(resource).get() (err, response, body) ->
       if err
         res.reply "Are you sure about that url?"
@@ -80,7 +82,7 @@ module.exports = (robot) ->
       else if response.statusCode is 200
         hash = computeHash(body)
         resources = robot.brain.get('web_resources') or {}
-        resources[res.match[1]] = hash
+        resources[res.match[2]] = hash
         robot.brain.set 'web_resources', resources
         if firstPeriodicCheck
           room = res.envelope.room
@@ -90,14 +92,17 @@ module.exports = (robot) ->
       else
         res.reply "The resource seems unavailable: #{response.statusMessage}"
 
-  robot.respond /stop watching (https?:\/\/[^\s]+)$/, (res) ->
+  robot.respond /stop watching ((?:https?:\/\/)?([^\s]+))$/, (res) ->
     resources = robot.brain.get('web_resources') or {}
     if res.match[1] of resources
       delete resources[res.match[1]]
-      robot.brain.set 'web_resources', resources
-      res.reply "Less work? Aww..."
+    else if res.match[2] of resources
+      delete resources[res.match[2]]
     else
       res.reply "I'm not :/"
+      return
+    robot.brain.set 'web_resources', resources
+    res.reply "Less work? Aww..."
 
   robot.respond /what are you watching?/, (res) ->
     resources = robot.brain.get('web_resources')
