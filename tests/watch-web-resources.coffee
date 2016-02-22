@@ -6,6 +6,7 @@ co = require('co')
 expect = require('chai').expect
 
 describe 'watch-web-resources', ->
+  this.timeout(5000)
 
   beforeEach ->
     @room = helper.createRoom(httpd: false)
@@ -90,7 +91,7 @@ describe 'watch-web-resources', ->
       @room.robot.brain.set 'web_resources', {'github.com': '', 'twitter.com': ''}
       co =>
         yield @room.user.say 'pchaigno', 'hubot: did any web resource change?'
-        yield new Promise.delay(1000)
+        yield new Promise.delay(2000)
 
     it 'answers with the url of the changed resources', ->
       expect(@room.messages).to.eql [
