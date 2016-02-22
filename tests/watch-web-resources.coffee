@@ -6,6 +6,7 @@ co = require('co')
 expect = require('chai').expect
 
 describe 'watch-web-resources', ->
+
   beforeEach ->
     @room = helper.createRoom(httpd: false)
 
@@ -86,7 +87,7 @@ describe 'watch-web-resources', ->
 
   context 'pchaigno asks if any web resource changed', ->
     beforeEach ->
-      @room.robot.brain.set 'web_resources', {'https://github.com': '', 'https://twitter.com': ''}
+      @room.robot.brain.set 'web_resources', {'github.com': '', 'twitter.com': ''}
       co =>
         yield @room.user.say 'pchaigno', 'hubot: did any web resource change?'
         yield new Promise.delay(1000)
@@ -94,8 +95,8 @@ describe 'watch-web-resources', ->
     it 'answers with the url of the changed resources', ->
       expect(@room.messages).to.eql [
         ['pchaigno', 'hubot: did any web resource change?']
-        ['hubot', "https://github.com changed"]
-        ['hubot', "https://twitter.com changed"]
+        ['hubot', "github.com changed"]
+        ['hubot', "twitter.com changed"]
       ]
       expect(@room.robot.brain.get('web_resources')['github.com']).to.not.eql ''
 

@@ -25,7 +25,8 @@
     "hubot-shipit": "^0.2.0",
     "hubot-url-title": "^1.2.2",
     "hubot-wikipedia": "0.0.2",
-    "optparse": "1.0.3"
+    "optparse": "1.0.3",
+    "request": "^2.69.0"
   },
   "devDependencies": {
     "chai": "^2.3.0",

@@ -16,6 +16,7 @@
 #   Paul Chaignon <paul.chaignon@gmail.com>
 
 crypto = require "crypto"
+request = require "request"
 
 PERIODIC_CHECKS_INTERVAL = 10000
 periodicCheckId = null
@@ -30,7 +31,7 @@ changedWebResources = (robot, room) ->
     changedWebResource(robot, room, resource, hash)
 
 changedWebResource = (robot, room, resource, hash) ->
-  robot.http(resource).get() (err, response, body) ->
+  request "http://#{resource}", (err, response, body) ->
       newHash = null
       if err
         newHash = 0
@@ -74,8 +75,8 @@ module.exports = (robot) ->
   robot.respond /watch ((?:https?:\/\/)?([^\s]+))$/, (res) ->
     resource = res.match[1]
     if not /^https?:\/\//.test(resource)
-      resource = "https://#{resource}"
-    robot.http(resource).get() (err, response, body) ->
+      resource = "http://#{resource}"
+    request resource, (err, response, body) ->
       if err
         res.reply "Are you sure about that url?"
         res.send "#{err}"
