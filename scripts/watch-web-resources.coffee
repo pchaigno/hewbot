@@ -100,8 +100,15 @@ module.exports = (robot) ->
       res.reply "I'm not :/"
 
   robot.respond /what are you watching?/, (res) ->
-    resources = Object.keys(robot.brain.get('web_resources')) or []
-    res.reply resources.join(', ')
+    resources = robot.brain.get('web_resources')
+    if resources is null
+      res.reply "Nothing :'("
+    else
+      resources = Object.keys(resources)
+      if resources is 0
+        res.reply "Nothing :'("
+      else
+        res.reply resources.join(', ')
 
   robot.respond /did any web resource change?/, (res) ->
     changedWebResources(robot, res)

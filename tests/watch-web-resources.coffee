@@ -48,6 +48,16 @@ describe 'watch-web-resources', ->
         ['hubot', "@bob https://github.com"]
       ]
 
+  context 'someone asks for the list of monitored web resources', ->
+    beforeEach ->
+      @room.user.say 'bob', 'hubot: what are you watching?'
+
+    it "answers that it's not watching anything", ->
+      expect(@room.messages).to.eql [
+        ['bob', 'hubot: what are you watching?']
+        ['hubot', "@bob Nothing :'("]
+      ]
+
   context 'pchaigno does not care for github.com anymore', ->
     beforeEach ->
       @room.robot.brain.set 'web_resources', {'https://github.com': ''}
