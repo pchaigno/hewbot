@@ -70,6 +70,12 @@ repo.
 
 ### Testing
 
+Install dependencies and run tests with the following commands:
+```
+$ npm install
+$ npm test
+```
+
 Hewbot uses [hubot-test-helper](https://github.com/mtsmfm/hubot-test-helper) for test development.
 
 See this blog post for a good tutorial: https://amussey.github.io/2015/08/11/testing-hubot-scripts.html
