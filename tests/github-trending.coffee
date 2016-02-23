@@ -1,5 +1,5 @@
 Helper = require('hubot-test-helper')
-helper = new Helper('./../node_modules/hubot-url-title/src/scripts/github-trending.js')
+helper = new Helper('./../scripts/github-trending.js')
 
 Promise = require('bluebird')
 co = require('co')
