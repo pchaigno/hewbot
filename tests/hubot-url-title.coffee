@@ -20,3 +20,15 @@ describe 'hubot-url-title', ->
         ['john', "https://www.youtube.com/watch?v=u-mRU44Q5u4"]
         ['hubot', "AWS re:Invent 2015 | (SEC316) Harden Your Architecture w/ Security Incident Response Simulations - YouTube"]
       ]
+
+  context "user posts a link to a PDF file", ->
+    beforeEach ->
+      co =>
+        yield @room.user.say 'john', "http://www.intel.fr/content/dam/doc/application-note/pci-sig-sr-iov-primer-sr-iov-technology-paper.pdf"
+        yield new Promise.delay(500)
+
+    it 'posts the title of the video', ->
+      expect(@room.messages).to.eql [
+        ['john', "http://www.intel.fr/content/dam/doc/application-note/pci-sig-sr-iov-primer-sr-iov-technology-paper.pdf"]
+        ['hubot', "PCI-SIG SR-IOV Primer"]
+      ]
