@@ -6,7 +6,7 @@ co = require('co')
 expect = require('chai').expect
 
 describe 'watch-web-resources', ->
-  this.timeout(5000)
+  this.timeout(30000)
 
   beforeEach ->
     @room = helper.createRoom(httpd: false)
@@ -15,7 +15,7 @@ describe 'watch-web-resources', ->
     beforeEach ->
       co =>
         yield @room.user.say 'pchaigno', 'hubot: watch https://github.com'
-        yield new Promise.delay(1000)
+        yield new Promise.delay(2000)
 
     it 'saves the resource in memory after checking it', ->
       expect(@room.messages).to.eql [
@@ -29,7 +29,7 @@ describe 'watch-web-resources', ->
     beforeEach ->
       co =>
         yield @room.user.say 'pchaigno', 'hubot: watch travis-ci.org'
-        yield new Promise.delay(1000)
+        yield new Promise.delay(2000)
 
     it 'saves the resource in memory after checking it', ->
       expect(@room.messages).to.eql [
@@ -43,13 +43,26 @@ describe 'watch-web-resources', ->
     beforeEach ->
       co =>
         yield @room.user.say 'pchaigno', 'hubot: watch https://orangesummerofcode.com'
-        yield new Promise.delay(1000)
+        yield new Promise.delay(2000)
 
     it 'returns the error message', ->
       expect(@room.messages).to.eql [
         ['pchaigno', 'hubot: watch https://orangesummerofcode.com']
         ['hubot', "@pchaigno Are you sure about that url?"]
         ['hubot', 'Error: getaddrinfo ENOTFOUND orangesummerofcode.com orangesummerofcode.com:443']
+      ]
+      expect(@room.robot.brain.get('web_resources')).to.eql null
+
+  context 'pchaigno wants to monitor a large file', ->
+    beforeEach ->
+      co =>
+        yield @room.user.say 'pchaigno', 'hubot: watch http://cdimage.debian.org/debian-cd/8.3.0/amd64/iso-cd/debian-8.3.0-amd64-CD-1.iso'
+        yield new Promise.delay(20000)
+
+    it 'returns the error message', ->
+      expect(@room.messages).to.eql [
+        ['pchaigno', 'hubot: watch http://cdimage.debian.org/debian-cd/8.3.0/amd64/iso-cd/debian-8.3.0-amd64-CD-1.iso']
+        ['hubot', "@pchaigno That's too big for me..."]
       ]
       expect(@room.robot.brain.get('web_resources')).to.eql null
 
@@ -91,7 +104,7 @@ describe 'watch-web-resources', ->
       @room.robot.brain.set 'web_resources', {'github.com': '', 'twitter.com': ''}
       co =>
         yield @room.user.say 'pchaigno', 'hubot: did any web resource change?'
-        yield new Promise.delay(2000)
+        yield new Promise.delay(4000)
 
     it 'answers with the url of the changed resources', ->
       expect(@room.messages).to.eql [
@@ -111,3 +124,17 @@ describe 'watch-web-resources', ->
       expect(@room.messages).to.eql [
         ['pchaigno', 'hubot: did any web resource change?']
       ]
+
+  context 'pchaigno asks if any web resource changed', ->
+    beforeEach ->
+      @room.robot.brain.set 'web_resources', {'cdimage.debian.org/debian-cd/8.3.0/amd64/iso-cd/debian-8.3.0-amd64-CD-1.iso': ''}
+      co =>
+        yield @room.user.say 'pchaigno', 'hubot: did any web resource change?'
+        yield new Promise.delay(20000)
+
+    it 'answers that one of the resources became too big and was eliminated', ->
+      expect(@room.messages).to.eql [
+        ['pchaigno', 'hubot: did any web resource change?']
+        ['hubot', 'cdimage.debian.org/debian-cd/8.3.0/amd64/iso-cd/debian-8.3.0-amd64-CD-1.iso is becoming too big for me...']
+      ]
+      expect(@room.robot.brain.get('web_resources')).to.eql {}

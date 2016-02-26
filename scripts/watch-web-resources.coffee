@@ -19,6 +19,7 @@ crypto = require "crypto"
 request = require "request"
 
 PERIODIC_CHECKS_INTERVAL = 10000
+MAX_SIZE_DOWNLOADED_FILES = 1000000
 periodicCheckId = null
 firstPeriodicCheck = true
 
@@ -31,6 +32,7 @@ changedWebResources = (robot, room) ->
     changedWebResource(robot, room, resource, hash)
 
 changedWebResource = (robot, room, resource, hash) ->
+  size = 0
   request "http://#{resource}", (err, response, body) ->
       newHash = null
       if err
@@ -43,6 +45,15 @@ changedWebResource = (robot, room, resource, hash) ->
         newHash = response.statusCode
       if newHash isnt null
         callbackChangedResource(robot, resource, newHash, room)
+  .on 'data', (chunk) ->
+    size += chunk.length
+    if size > MAX_SIZE_DOWNLOADED_FILES
+      this.abort()
+      resources = robot.brain.get('web_resources') or {}
+      delete resources[resource]
+      robot.brain.set 'web_resources', resources
+      robot.messageRoom room, "#{resource} is becoming too big for me..."
+
 
 callbackChangedResource = (robot, resource, newHash, room) ->
   # There might be concurrent accesses to web_resources here.
@@ -76,6 +87,7 @@ module.exports = (robot) ->
     resource = res.match[1]
     if not /^https?:\/\//.test(resource)
       resource = "http://#{resource}"
+    size = 0
     request resource, (err, response, body) ->
       if err
         res.reply "Are you sure about that url?"
@@ -92,6 +104,11 @@ module.exports = (robot) ->
         res.reply "Resource looks good. I'll keep you informed."
       else
         res.reply "The resource seems unavailable: #{response.statusMessage}"
+    .on 'data', (chunk) ->
+      size += chunk.length
+      if size > MAX_SIZE_DOWNLOADED_FILES
+        this.abort()
+        res.reply "That's too big for me..."
 
   robot.respond /stop watching ((?:https?:\/\/)?([^\s]+))$/, (res) ->
     resources = robot.brain.get('web_resources') or {}
