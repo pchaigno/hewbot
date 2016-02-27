@@ -78,10 +78,12 @@ init = (robot) ->
   resources = robot.brain.get('web_resources')
   room = robot.brain.get('room_web_resources')
   if resources isnt null and room isnt null
-    setInterval(periodicCheck, PERIODIC_CHECKS_INTERVAL, robot, room)
+    periodicCheckId = setInterval(periodicCheck, PERIODIC_CHECKS_INTERVAL, robot, room)
 
 module.exports = (robot) ->
-  init(robot)
+  robot.brain.on 'loaded', (_) ->
+    if periodicCheckId is null
+      init(robot)
 
   robot.respond /watch ((?:https?:\/\/)?([^\s]+))$/, (res) ->
     resource = res.match[1]
