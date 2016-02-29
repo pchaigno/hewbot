@@ -25,10 +25,10 @@ function extractRepositories(error, response, body, msg) {
 
     $('h3').each(function(i, elem) {
       var link = $(this).children('a').attr("href");
-      results.push(link);
+      results.push(link.substring(1));
     });
 
-    msg.send(results.join(' - '));
+    msg.send(results.join(', '));
   }
 }
 

@@ -19,7 +19,7 @@ describe 'github-trending', ->
 
     it 'gets the trending projects', ->
       expect(@room.messages[0]).to.eql ['john', "hubot trending"]
-      expect(@room.messages[1]).to.match /((\/.+\/.+) - ){9}(\/.+\/.+)/
+      expect(@room.messages[1]).to.match /((.+\/.+), ){9}(.+\/.+)/
 
   context "user asks for the trending repositories in python language", ->
     beforeEach ->
@@ -29,7 +29,7 @@ describe 'github-trending', ->
 
     it 'gets the python trending projects', ->
       expect(@room.messages[0]).to.eql ['john', "hubot trending-python"]
-      expect(@room.messages[1]).to.match /((\/.+\/.+) - ){9}(\/.+\/.+)/
+      expect(@room.messages[1]).to.match /((.+\/.+), ){9}(.+\/.+)/
 
   context "user asks for informations on a project", ->
     beforeEach ->
