@@ -6,6 +6,8 @@ co = require('co')
 expect = require('chai').expect
 
 describe 'github-trending', ->
+  this.timeout(5000)
+
   beforeEach ->
     @room = helper.createRoom(httpd: false)
 
@@ -13,7 +15,7 @@ describe 'github-trending', ->
     beforeEach ->
       co =>
         yield @room.user.say 'john', "hubot trending"
-        yield new Promise.delay(500)
+        yield new Promise.delay(2000)
 
     it 'gets the trending projects', ->
       expect(@room.messages[0]).to.eql ['john', "hubot trending"]
@@ -23,7 +25,7 @@ describe 'github-trending', ->
     beforeEach ->
       co =>
         yield @room.user.say 'john', "hubot trending-python"
-        yield new Promise.delay(500)
+        yield new Promise.delay(2000)
 
     it 'gets the python trending projects', ->
       expect(@room.messages[0]).to.eql ['john', "hubot trending-python"]
@@ -33,7 +35,7 @@ describe 'github-trending', ->
     beforeEach ->
       co =>
         yield @room.user.say 'john', "hubot trending /santinic/how2"
-        yield new Promise.delay(500)
+        yield new Promise.delay(2000)
 
     it 'gets the python trending projects', ->
       expect(@room.messages).to.eql [
@@ -45,7 +47,7 @@ describe 'github-trending', ->
     beforeEach ->
       co =>
         yield @room.user.say 'john', "hubot trending /bad_user/bad_project"
-        yield new Promise.delay(500)
+        yield new Promise.delay(2000)
 
     it 'gets the python trending projects', ->
       expect(@room.messages).to.eql [
