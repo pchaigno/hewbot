@@ -17,40 +17,33 @@
 var cheerio = require('cheerio');
 var request = require('request')
 
+function extractRepositories(error, response, body, msg) {
+  if (!error && response.statusCode == 200) {
+    $ = cheerio.load(body);
+
+    var results = [];
+
+    $('h3').each(function(i, elem) {
+      var link = $(this).children('a').attr("href");
+      results.push(link);
+    });
+
+    msg.send(results.join(' - '));
+  }
+}
+
 module.exports = function(robot) {
 
   robot.respond(/trending$/i, function(msg){
-    request('https://github.com/trending', function(error, response, body){
-      if (!error && response.statusCode == 200) {
-        $ = cheerio.load(body);
-
-        var results = [];
-
-        $('h3').each(function(i, elem) {
-          var link = $(this).children('a').attr("href");
-          results.push(link);
-        });
-
-        msg.send(results.join(' - '));
-      }
+    request('https://github.com/trending', function(error, response, body) {
+      extractRepositories(error, response, body, msg);
     });
   });
 
   robot.respond(/trending-(.*)$/i, function(msg){
     var language = msg.match[1];
-    request('https://github.com/trending/'+language, function(error, response, body){
-      if (!error && response.statusCode == 200) {
-        $ = cheerio.load(body);
-
-        var results = [];
-
-        $('h3').each(function(i, elem) {
-          var link = $(this).children('a').attr("href");
-          results.push(link);
-        });
-
-        msg.send(results.join(' - '));
-      }
+    request('https://github.com/trending/'+language, function(error, response, body) {
+      extractRepositories(error, response, body, msg);
     });
   });
 
