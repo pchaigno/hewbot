@@ -11,7 +11,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 
 # Install base dependencies
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends python build-essential ca-certificates curl libssl-dev
+RUN apt-get install -y --no-install-recommends python build-essential ca-certificates curl libssl-dev libicu-dev
 
 # Install last version of Node.js
 RUN curl -sL https://deb.nodesource.com/setup_5.x | bash -
