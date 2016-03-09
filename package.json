@@ -12,7 +12,7 @@
     "hubot": ">= 2.6.0",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-images": "^0.2.4",
-    "hubot-google-translate": "^0.2.0",
+    "hubot-google-translate": "awailly/hubot-google-translate#fix-tests",
     "hubot-help": "^0.1.2",
     "hubot-heroku-keepalive": "^1.0.0",
     "hubot-irc": "^0.2.8",
