@@ -1,5 +1,5 @@
 Helper = require('hubot-test-helper')
-helper = new Helper('./../scripts/github-trending.js')
+helper = new Helper('./../scripts/github-trending.coffee')
 
 Promise = require('bluebird')
 co = require('co')
