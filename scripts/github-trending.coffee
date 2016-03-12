@@ -1,5 +1,5 @@
 # Description:
-#   get the latest trending repositories on github
+#   Gets the latest trending repositories on GitHub.
 #
 # Dependencies:
 #   cheerio
@@ -9,10 +9,12 @@
 #   None
 #
 # Commands:
-#   trending          : list trending repositories (all languages)
-#   trending-language : list trending repositories for the given language
-#   trending project  : get general information for the given project
+#   hubot trending - Lists trending repositories (all languages).
+#   hubot trending-[language] - Lists trending repositories for the given language.
+#   hubot trending [project] - Gets general information for the given project.
 #
+# Author:
+#   Sabri Eddir
 
 cheerio = require 'cheerio'
 request = require 'request'
