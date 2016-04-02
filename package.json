@@ -36,7 +36,8 @@
     "bluebird": "^3.3.1",
     "co": "^4.6.0",
     "cheerio": "^0.20.0",
-    "request": "^2.69.0"
+    "request": "^2.69.0",
+    "nock": "^7.7.2"
   },
   "engines": {
     "node": "0.10.x"
