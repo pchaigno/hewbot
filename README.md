@@ -1,5 +1,7 @@
 # Hewbot
 
+[![Build Status](https://travis-ci.org/pchaigno/hewbot.svg?branch=master)](https://travis-ci.org/pchaigno/hewbot)
+
 Hewbot is a chat bot built on the [Hubot][hubot] framework.
 
 [hubot]: http://hubot.github.com
