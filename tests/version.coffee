@@ -5,20 +5,16 @@ expect = require('chai').expect
 helper = new Helper('./../scripts/version.coffee')
 
 describe 'version', ->
-  room = null
 
   beforeEach ->
-    room = helper.createRoom()
-
-  afterEach ->
-    room.destroy()
+    @room = helper.createRoom(httpd: false)
 
   context "user ask for the Hubot version", ->
     beforeEach ->
-      room.user.say 'john', "hubot: what's your current version?"
+      @room.user.say 'john', "hubot: what's your current version?"
 
     it 'encourage user to take a bouncer', ->
-      expect(room.messages).to.eql [
+      expect(@room.messages).to.eql [
         ['john', "hubot: what's your current version?"]
-        ['hubot', "@john I'm at version #{room.robot.version}"]
+        ['hubot', "@john I'm at version #{@room.robot.version}"]
       ]
