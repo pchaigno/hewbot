@@ -1,6 +1,7 @@
 # Hewbot
 
 [![Build Status](https://travis-ci.org/pchaigno/hewbot.svg?branch=master)](https://travis-ci.org/pchaigno/hewbot)
+[![Coverage Status](https://coveralls.io/repos/github/pchaigno/hewbot/badge.svg?branch=master)](https://coveralls.io/github/pchaigno/hewbot?branch=master)
 
 Hewbot is a chat bot built on the [Hubot][hubot] framework.
 
