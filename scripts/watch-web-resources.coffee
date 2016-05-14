@@ -15,16 +15,13 @@
 # Author:
 #   Paul Chaignon <paul.chaignon@gmail.com>
 
-crypto = require "crypto"
 request = require "request"
+hasher = require './hash-web-resources.coffee'
 
 PERIODIC_CHECKS_INTERVAL = 10000
 MAX_SIZE_DOWNLOADED_FILES = 1000000
 periodicCheckId = null
 firstPeriodicCheck = true
-
-computeHash = (body) ->
-  return crypto.createHash("sha256").update(body).digest("base64")
 
 changedWebResources = (robot, room) ->
   resources = robot.brain.get('web_resources') or {}
@@ -38,7 +35,7 @@ changedWebResource = (robot, room, resource, hash) ->
       if err
         newHash = 0
       else if response.statusCode is 200
-        newHash = computeHash body
+        newHash = hasher.computeHash body, response.headers['content-type']
         if newHash is hash
           newHash = null
       else
@@ -95,7 +92,7 @@ module.exports = (robot) ->
         res.reply "Are you sure about that url?"
         res.send "#{err}"
       else if response.statusCode is 200
-        hash = computeHash(body)
+        hash = hasher.computeHash(body)
         resources = robot.brain.get('web_resources') or {}
         resources[res.match[2]] = hash
         robot.brain.set 'web_resources', resources
