@@ -35,7 +35,7 @@ changedWebResource = (robot, room, resource, hash) ->
       if err
         newHash = 0
       else if response.statusCode is 200
-        newHash = hasher.computeHash body
+        newHash = hasher.computeHash body, response.headers['content-type']
         if newHash is hash
           newHash = null
       else

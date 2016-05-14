@@ -1,10 +1,12 @@
 Helper = require('hubot-test-helper')
 helper = new Helper('./../scripts/watch-web-resources.coffee')
 
+hasher = require './../scripts/hash-web-resources.coffee'
 Promise = require('bluebird')
 co = require('co')
 expect = require('chai').expect
 nock = require('nock')
+fs = require 'fs'
 
 describe 'watch-web-resources', ->
 
@@ -164,3 +166,27 @@ describe 'watch-web-resources', ->
         ['hubot', 'cdimage.debian.org/debian-cd/8.3.0/amd64/iso-cd/debian-8.3.0-amd64-CD-1.iso is becoming too big for me...']
       ]
       expect(@room.robot.brain.get('web_resources')).to.eql {}
+
+
+  context 'pchaigno asks if the text of any web resource changed', ->
+    beforeEach ->
+      github_original_html = fs.readFileSync 'tests/test_reponses/github1.html', 'utf8'
+      github_original_hash = hasher.computeHash github_original_html, 'text/html'
+      twitter_original_html = fs.readFileSync 'tests/test_reponses/twitter1.html', 'utf8'
+      twitter_original_hash = hasher.computeHash twitter_original_html, 'text/html'
+      @room.robot.brain.set 'web_resources', {'github.com': github_original_hash, 'twitter.com': twitter_original_hash}
+
+      header = {'Content-Type': 'text/html;charset=utf-8'}
+      nock('http://twitter.com').defaultReplyHeaders(header).get('/').replyWithFile(200, 'tests/test_reponses/twitter2.html')
+      nock('http://github.com').defaultReplyHeaders(header).get('/').replyWithFile(200, 'tests/test_reponses/github2.html')
+      co =>
+        @room.user.say 'pchaigno', 'hubot: did any web resource change?'
+        new Promise.delay 100
+
+    it 'answers with the url of the changed resources', ->
+      expect(nock.isDone()).to.be.true
+      expect(@room.messages).to.eql [
+        ['pchaigno', 'hubot: did any web resource change?']
+        ['hubot', "twitter.com changed"]
+      ]
+      expect(@room.robot.brain.get('web_resources')['github.com']).to.not.eql ''

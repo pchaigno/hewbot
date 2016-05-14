@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "crypto": "0.0.3",
+    "fs": "0.0.2",
+    "html-to-text": "^2.1.0",
     "hubot": ">= 2.6.0",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-images": "^0.2.4",
