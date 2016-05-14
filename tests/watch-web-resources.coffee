@@ -138,6 +138,9 @@ describe 'watch-web-resources', ->
       nock(/.*/).get(/.*/).reply(404)
       @room.user.say 'pchaigno', 'hubot: did any web resource change?'
 
+    afterEach ->
+      nock.cleanAll()
+
     it 'answers that nothing changed', ->
       expect(nock.isDone()).to.be.false
       expect(nock.pendingMocks()).to.eql ['GET /.*///.*/']
