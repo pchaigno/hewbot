@@ -98,6 +98,9 @@ module.exports = (robot) ->
         robot.brain.set 'web_resources', resources
         if firstPeriodicCheck
           room = res.envelope.room
+          if room is null
+          # Direct message, we need to find the room where we last saw the user.
+            room = robot.brain.userForName(res.message.user.name).room
           robot.brain.set 'room_web_resources', room
           periodicCheckId = setInterval(periodicCheck, PERIODIC_CHECKS_INTERVAL, robot, room)
         res.reply "Resource looks good. I'll keep you informed."
