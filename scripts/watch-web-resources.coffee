@@ -17,6 +17,7 @@
 
 request = require "request"
 hasher = require './hash-web-resources.coffee'
+ssdeep = require 'ssdeep'
 
 PERIODIC_CHECKS_INTERVAL = 60000
 MAX_SIZE_DOWNLOADED_FILES = 1000000
@@ -36,7 +37,9 @@ changedWebResource = (robot, room, resource, hash) ->
         newHash = 0
       else if response.statusCode is 200
         newHash = hasher.computeHash body, response.headers['content-type']
-        if newHash is hash
+        score = ssdeep.compare(newHash, hash)
+        threshold = process.env.HUBOT_WATCH_THRESHOLD
+        if score > threshold
           newHash = null
       else
         newHash = response.statusCode

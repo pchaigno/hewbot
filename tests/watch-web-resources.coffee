@@ -12,6 +12,7 @@ describe 'watch-web-resources', ->
 
   beforeEach ->
     @room = helper.createRoom(httpd: false)
+    process.env.HUBOT_WATCH_THRESHOLD = 90
 
   context 'pchaigno wants to monitor a new web resource', ->
     beforeEach ->
