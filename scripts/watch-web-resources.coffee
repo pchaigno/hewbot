@@ -92,7 +92,7 @@ module.exports = (robot) ->
         res.reply "Are you sure about that url?"
         res.send "#{err}"
       else if response.statusCode is 200
-        hash = hasher.computeHash(body)
+        hash = hasher.computeHash body, response.headers['content-type']
         resources = robot.brain.get('web_resources') or {}
         resources[res.match[2]] = hash
         robot.brain.set 'web_resources', resources
