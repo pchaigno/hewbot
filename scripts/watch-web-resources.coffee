@@ -86,6 +86,12 @@ module.exports = (robot) ->
   robot.brain.on 'loaded', (_) ->
     init(robot)
 
+  robot.respond /reload/i, (res) ->
+    if periodicCheckId isnt null
+      clearInterval(periodicCheckId)
+      periodicCheckId = null
+      firstPeriodicCheck = true
+
   robot.respond /watch ((?:https?:\/\/)?([^\s]+))$/, (res) ->
     resource = res.match[1]
     if not /^https?:\/\//.test(resource)
