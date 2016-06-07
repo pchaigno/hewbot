@@ -18,7 +18,7 @@
 request = require "request"
 hasher = require './hash-web-resources.coffee'
 
-PERIODIC_CHECKS_INTERVAL = 10000
+PERIODIC_CHECKS_INTERVAL = 60000
 MAX_SIZE_DOWNLOADED_FILES = 1000000
 periodicCheckId = null
 firstPeriodicCheck = true
