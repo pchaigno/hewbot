@@ -14,6 +14,10 @@ describe 'watch-web-resources', ->
     @room = helper.createRoom(httpd: false)
     process.env.HUBOT_WATCH_THRESHOLD = 90
 
+  afterEach ->
+    @room.user.say 'pchaigno', 'hubot: reload'
+
+
   context 'pchaigno wants to monitor a new web resource', ->
     beforeEach ->
       nock('https://github.com').get('/').reply(200, 'github page')
