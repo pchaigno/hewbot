@@ -68,22 +68,23 @@ periodicCheck = (robot, room) ->
     firstPeriodicCheck = false
   else
     resources = robot.brain.get('web_resources')
-    if resources is null
+    if resources is null or Object.keys(resources).length == 0
       clearInterval(periodicCheckId)
+      periodicCheckId = null
       firstPeriodicCheck = true
     else
       changedWebResources(robot, room)
 
 init = (robot) ->
-  resources = robot.brain.get('web_resources')
-  room = robot.brain.get('room_web_resources')
-  if resources isnt null and room isnt null
-    periodicCheckId = setInterval(periodicCheck, PERIODIC_CHECKS_INTERVAL, robot, room)
+  if periodicCheckId is null
+    resources = robot.brain.get('web_resources')
+    room = robot.brain.get('room_web_resources')
+    if resources isnt null and room isnt null and Object.keys(resources).length > 0
+      periodicCheckId = setInterval(periodicCheck, PERIODIC_CHECKS_INTERVAL, robot, room)
 
 module.exports = (robot) ->
   robot.brain.on 'loaded', (_) ->
-    if periodicCheckId is null
-      init(robot)
+    init(robot)
 
   robot.respond /watch ((?:https?:\/\/)?([^\s]+))$/, (res) ->
     resource = res.match[1]
@@ -99,7 +100,7 @@ module.exports = (robot) ->
         resources = robot.brain.get('web_resources') or {}
         resources[res.match[2]] = hash
         robot.brain.set 'web_resources', resources
-        if firstPeriodicCheck
+        if periodicCheckId is null
           room = res.envelope.room
           if typeof room is "undefined"
           # Direct message, we need to find the room where we last saw the user.
