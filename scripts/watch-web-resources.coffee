@@ -37,7 +37,9 @@ changedWebResource = (robot, room, resource, hash) ->
         newHash = 0
       else if response.statusCode is 200
         newHash = hasher.computeHash body, response.headers['content-type']
-        score = ssdeep.compare(newHash, hash)
+        score = 0
+        if typeof hash is 'string'
+          score = ssdeep.compare(newHash, hash)
         threshold = process.env.HUBOT_WATCH_THRESHOLD
         if score > threshold
           newHash = null

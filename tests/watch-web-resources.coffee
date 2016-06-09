@@ -140,6 +140,23 @@ describe 'watch-web-resources', ->
       expect(@room.robot.brain.get('web_resources')['github.com']).to.not.eql ''
 
 
+  context 'pchaigno asks if any web resource changed after a server-side error', ->
+    beforeEach ->
+      @room.robot.brain.set 'web_resources', {'github.com': '502'}
+      nock('http://github.com').get('/').reply(200, 'github page')
+      co =>
+        @room.user.say 'pchaigno', 'hubot: did any web resource change?'
+        new Promise.delay 100
+
+    it 'answers with the url of the changed resources', ->
+      expect(nock.isDone()).to.be.true
+      expect(@room.messages).to.eql [
+        ['pchaigno', 'hubot: did any web resource change?']
+        ['hubot', "github.com changed"]
+      ]
+      expect(@room.robot.brain.get('web_resources')['github.com']).to.not.eql '502'
+
+
   context 'pchaigno asks if any web resource changed', ->
     beforeEach ->
       nock(/.*/).get(/.*/).reply(404)
