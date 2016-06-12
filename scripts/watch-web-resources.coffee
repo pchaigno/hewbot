@@ -17,8 +17,9 @@
 
 request = require "request"
 hasher = require './hash-web-resources.coffee'
+ssdeep = require 'ssdeep'
 
-PERIODIC_CHECKS_INTERVAL = 10000
+PERIODIC_CHECKS_INTERVAL = 60000
 MAX_SIZE_DOWNLOADED_FILES = 1000000
 periodicCheckId = null
 firstPeriodicCheck = true
@@ -36,7 +37,11 @@ changedWebResource = (robot, room, resource, hash) ->
         newHash = 0
       else if response.statusCode is 200
         newHash = hasher.computeHash body, response.headers['content-type']
-        if newHash is hash
+        score = 0
+        if typeof hash is 'string'
+          score = ssdeep.compare(newHash, hash)
+        threshold = process.env.HUBOT_WATCH_THRESHOLD
+        if score > threshold
           newHash = null
       else
         newHash = response.statusCode
@@ -65,22 +70,29 @@ periodicCheck = (robot, room) ->
     firstPeriodicCheck = false
   else
     resources = robot.brain.get('web_resources')
-    if resources is null
+    if resources is null or Object.keys(resources).length == 0
       clearInterval(periodicCheckId)
+      periodicCheckId = null
       firstPeriodicCheck = true
     else
       changedWebResources(robot, room)
 
 init = (robot) ->
-  resources = robot.brain.get('web_resources')
-  room = robot.brain.get('room_web_resources')
-  if resources isnt null and room isnt null
-    periodicCheckId = setInterval(periodicCheck, PERIODIC_CHECKS_INTERVAL, robot, room)
+  if periodicCheckId is null
+    resources = robot.brain.get('web_resources')
+    room = robot.brain.get('room_web_resources')
+    if resources isnt null and room isnt null and Object.keys(resources).length > 0
+      periodicCheckId = setInterval(periodicCheck, PERIODIC_CHECKS_INTERVAL, robot, room)
 
 module.exports = (robot) ->
   robot.brain.on 'loaded', (_) ->
-    if periodicCheckId is null
-      init(robot)
+    init(robot)
+
+  robot.respond /reload/i, (res) ->
+    if periodicCheckId isnt null
+      clearInterval(periodicCheckId)
+      periodicCheckId = null
+      firstPeriodicCheck = true
 
   robot.respond /watch ((?:https?:\/\/)?([^\s]+))$/, (res) ->
     resource = res.match[1]
@@ -92,13 +104,13 @@ module.exports = (robot) ->
         res.reply "Are you sure about that url?"
         res.send "#{err}"
       else if response.statusCode is 200
-        hash = hasher.computeHash(body)
+        hash = hasher.computeHash body, response.headers['content-type']
         resources = robot.brain.get('web_resources') or {}
         resources[res.match[2]] = hash
         robot.brain.set 'web_resources', resources
-        if firstPeriodicCheck
+        if periodicCheckId is null
           room = res.envelope.room
-          if room is null
+          if typeof room is "undefined"
           # Direct message, we need to find the room where we last saw the user.
             room = robot.brain.userForName(res.message.user.name).room
           robot.brain.set 'room_web_resources', room
