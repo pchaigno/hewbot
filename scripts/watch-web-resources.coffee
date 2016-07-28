@@ -33,8 +33,11 @@ changedWebResource = (robot, room, resource, hash) ->
   size = 0
   request "http://#{resource}", (err, response, body) ->
       newHash = null
-      if err
-        newHash = 0
+      if err or typeof response is "undefined"
+        if err
+          console.log("#{resource}: #{err}")
+      else if response.statusCode >= 500
+        console.log("#{resource}: error #{response.statusCode}")
       else if response.statusCode is 200
         newHash = hasher.computeHash body, response.headers['content-type']
         score = 0
@@ -45,7 +48,11 @@ changedWebResource = (robot, room, resource, hash) ->
         threshold = process.env.HUBOT_WATCH_THRESHOLD
         if score > threshold
           newHash = null
-      else
+        else
+          console.log("#{resource} has #{newHash}")
+          console.log("score: #{score}/#{threshold}")
+      else if response.statusCode isnt hash
+        console.log("#{response.statusCode} for #{resource}")
         newHash = response.statusCode
       if newHash isnt null
         callbackChangedResource(robot, resource, newHash, room)

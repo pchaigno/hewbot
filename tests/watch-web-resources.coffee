@@ -212,3 +212,22 @@ describe 'watch-web-resources', ->
         ['hubot', "twitter.com changed"]
       ]
       expect(@room.robot.brain.get('web_resources')['github.com']).to.not.eql ''
+
+
+  context 'pchaigno asks if any web resource changed', ->
+    beforeEach ->
+      @room.robot.brain.set 'web_resources', {'github.com': 'github page', 'twitter.com': 'twitter page'}
+      nock('http://twitter.com').get('/').reply(200, 'twitter page changed')
+      nock('http://github.com').get('/').reply(502, 'server side error')
+      co =>
+        @room.user.say 'pchaigno', 'hubot: did any web resource change?'
+        new Promise.delay 100
+
+    it 'skips web resource with HTTP 5xx error code', ->
+      expect(nock.isDone()).to.be.true
+      expect(@room.messages).to.eql [
+        ['pchaigno', 'hubot: did any web resource change?']
+        ['hubot', "twitter.com changed"]
+      ]
+      expect(@room.robot.brain.get('web_resources')['github.com']).to.eql 'github page'
+      expect(@room.robot.brain.get('web_resources')['twitter.com']).to.not.eql 'twitter page'
