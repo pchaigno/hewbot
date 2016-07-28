@@ -3,8 +3,6 @@ node_js:
   - "5.6.0"
   - "5.5.0"
   - "4.3.1"
-before_install:
-  - sudo apt-get install -y libfuzzy-dev
 install:
   - npm install
   - npm install coffee-coverage istanbul coveralls
@@ -21,4 +19,5 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+      - libfuzzy-dev
 
