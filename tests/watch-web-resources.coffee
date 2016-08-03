@@ -85,6 +85,22 @@ describe 'watch-web-resources', ->
       expect(@room.robot.brain.get('web_resources')).to.eql null
 
 
+  context 'pchaigno wants to monitor 404 web resource', ->
+    beforeEach ->
+      nock(/google\.com/).get(/s68f4c64d354gtgdh44\.html$/).reply(404, 'Not Found')
+      co =>
+        @room.user.say 'pchaigno', 'hubot: watch http://google.com/s68f4c64d354gtgdh44.html'
+        new Promise.delay 100
+
+    it 'saves the resource in memory after checking it', ->
+      expect(@room.messages).to.eql [
+        ['pchaigno', 'hubot: watch http://google.com/s68f4c64d354gtgdh44.html']
+        ['hubot', "@pchaigno Resource looks good. I'll keep you informed."]
+      ]
+      expect(Object.keys(@room.robot.brain.get('web_resources'))).to.eql ['google.com/s68f4c64d354gtgdh44.html']
+      expect(@room.robot.brain.get('room_web_resources')).to.eql 'room1'
+
+
   context 'someone asks for the list of monitored web resources', ->
     beforeEach ->
       @room.robot.brain.set 'web_resources', {'github.com': ''}
