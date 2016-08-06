@@ -8,6 +8,7 @@
     "test": "mocha --compilers coffee:coffee-script/register tests"
   },
   "dependencies": {
+    "bloomfilter": "0.0.16",
     "fs": "0.0.2",
     "html-to-text": "^2.1.0",
     "hubot": ">= 2.6.0",
