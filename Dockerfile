@@ -1,24 +1,17 @@
 # hewbot
 #
 # VERSION               1.0
-FROM ubuntu:14.04
+FROM node:5.12
 MAINTAINER Paul Chaignon <paul.chaignon@gmail.com>
 
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
-# Set debconf to run non-interactively
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-
-# Install base dependencies
+# Install ssdeep library
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends python build-essential ca-certificates curl libssl-dev libicu-dev
-
-# Install last version of Node.js
-RUN curl -sL https://deb.nodesource.com/setup_5.x | bash -
-RUN apt-get install -y --no-install-recommends nodejs
+RUN apt-get install -y libfuzzy-dev redis-server
 
 ADD . /hewbot
 WORKDIR /hewbot
+
+RUN npm install
 
 # Default adapter and name
 ENV ADAPTER shell
@@ -33,4 +26,4 @@ ENV HUBOT_IRC_DEBUG "true"
 ENV HUBOT_IRC_USESSL "true"
 ENV HUBOT_IRC_UNFLOOD "true"
 
-ENTRYPOINT bin/hubot --adapter $ADAPTER --name $NAME
+ENTRYPOINT bin/hubot --adapter $HUBOT_ADAPTER --name $HUBOT_NAME

@@ -11,8 +11,7 @@ Hewbot is a chat bot built on the [Hubot][hubot] framework.
 
 If you don't have a Node.js environment set up, you can use the provided Dockerfile:
 ```
-$ docker build .
-$ docker run -it [container_id]
+$ docker-compose up
 ```
 Alternatively, if you already have Node.js installed:
 ```
@@ -35,12 +34,11 @@ hewbot help - Displays all of the help commands that hewbot knows about.
 
 The Dockerfile allows you to send Hewbot on IRC:
 ```
-docker build .
-docker run -e "ADAPTER=irc" -e "NAME=[hewbot_nickname]" -e "HUBOT_IRC_ROOMS=#[channel]" -it [container_id]
+HUBOT_ADAPTER=irc HUBOT_NAME=[hewbot_nickname] HUBOT_IRC_ROOMS='#[channel]' docker-compose up
 ```
 Or, with a registered nickname:
 ```
-docker run -e "ADAPTER=irc" -e "HUBOT_IRC_NICKSERV_PASSWORD=[password]" -e "NAME=[hewbot_nickname]" -e "HUBOT_IRC_ROOMS=#[channel]" -it [container_id]
+HUBOT_ADAPTER=irc HUBOT_NAME=[hewbot_nickname] HUBOT_IRC_NICKSERV_PASSWORD=[password] HUBOT_IRC_ROOMS='#[channel]' docker-compose up
 ```
 See [Dockerfile](Dockerfile) for other possible environment variables.
 

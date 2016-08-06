@@ -1,0 +1,17 @@
+version: '2'
+services:
+  hewbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - brain
+    environment:
+      - REDIS_URL=redis://brain:6379/hubot
+      - HUBOT_ADAPTER=${HUBOT_ADAPTER}
+      - HUBOT_NAME=${HUBOT_NAME}
+      - HUBOT_IRC_ROOMS=${HUBOT_IRC_ROOMS}
+      - HUBOT_IRC_NICKSERV_PASSWORD=${HUBOT_IRC_NICKSERV_PASSWORD}
+
+  brain:
+    image: redis
