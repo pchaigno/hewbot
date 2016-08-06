@@ -19,7 +19,8 @@ String::startsWith ?= (s) -> @slice(0, s.length) == s
 
 module.exports = (robot) ->
   robot.enter (res) ->
-    for user in robot.brain.get('users_without_bouncer')
+    users_without_bouncer = robot.brain.get('users_without_bouncer') or {}
+    for user in users_without_bouncer
       if res.message.user.name.startsWith user
         res.reply "Prend un bouncer s'il te plait."
 
